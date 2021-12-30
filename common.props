@@ -1,9 +1,9 @@
-﻿<Project>
+<Project>
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
     <Version>1.0.0</Version>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
-	  <AbpProjectType>ms</AbpProjectType>
+	<AbpProjectType>app</AbpProjectType>
   </PropertyGroup>
 
   <Target Name="NoWarnOnRazorViewImportedTypeConflicts" BeforeTargets="RazorCoreCompile">
