@@ -49,7 +49,7 @@ namespace Yun.MultiCompany.EntityFrameworkCore
                 b.Property(x => x.CompanyId).IsRequired();
                 b.Property(x => x.CompanyRoleId).IsRequired();
                 b.HasOne(b => b.IdentityUser).WithMany().HasForeignKey(x => x.UserId);
-                b.HasOne(b => b.Company).WithMany().HasForeignKey(x => x.CompanyId);
+                b.HasOne(b => b.Company).WithMany().HasForeignKey(x => x.CompanyId).OnDelete(DeleteBehavior.NoAction);
                 b.HasOne(b => b.CompanyRole).WithMany().HasForeignKey(x => x.CompanyRoleId);
                 b.ConfigureByConvention();
             });

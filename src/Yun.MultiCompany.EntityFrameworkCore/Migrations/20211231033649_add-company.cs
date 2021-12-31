@@ -117,8 +117,7 @@ namespace Yun.MultiCompany.Migrations
                         name: "FK_CompanyUserRoles_Companies_CompanyId",
                         column: x => x.CompanyId,
                         principalTable: "Companies",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_CompanyUserRoles_CompanyRoles_CompanyRoleId",
                         column: x => x.CompanyRoleId,

@@ -13,7 +13,7 @@ using Yun.MultiCompany.EntityFrameworkCore;
 namespace Yun.MultiCompany.Migrations
 {
     [DbContext(typeof(MultiCompanyDbContext))]
-    [Migration("20211231025229_add-company")]
+    [Migration("20211231033649_add-company")]
     partial class addcompany
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -2441,7 +2441,7 @@ namespace Yun.MultiCompany.Migrations
                     b.HasOne("Yun.MultiCompany.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Yun.MultiCompany.CompanyRole", "CompanyRole")

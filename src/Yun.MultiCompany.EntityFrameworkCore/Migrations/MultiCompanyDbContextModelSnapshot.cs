@@ -2439,7 +2439,7 @@ namespace Yun.MultiCompany.Migrations
                     b.HasOne("Yun.MultiCompany.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Yun.MultiCompany.CompanyRole", "CompanyRole")
