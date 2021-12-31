@@ -7,7 +7,7 @@ namespace Yun.MultiCompany
 {
     [Dependency(ReplaceServices = true)]
     [ExposeServices(typeof(ICurrentUser), typeof(CurrentUser), typeof(CurrentCompanyUser))]
-    public class CurrentCompanyUser : CurrentUser, IMultiCompany
+    public class CurrentCompanyUser : CurrentUser
     {
         private readonly ICurrentPrincipalAccessor _principalAccessor;
 

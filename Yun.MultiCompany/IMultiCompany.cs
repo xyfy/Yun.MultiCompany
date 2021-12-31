@@ -7,8 +7,8 @@ namespace Yun.MultiCompany
     public interface IMultiCompany
     {
         /// <summary>
-        /// 用户现在切换到的公司id
+        /// 用户现在使用的公司id
         /// </summary>
-        Guid? CompanyId { get; }
+        Guid CompanyId { get; }
     }
 }

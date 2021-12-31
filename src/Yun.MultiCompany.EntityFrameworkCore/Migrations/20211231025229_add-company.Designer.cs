@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 using Yun.MultiCompany.EntityFrameworkCore;
@@ -12,9 +13,10 @@ using Yun.MultiCompany.EntityFrameworkCore;
 namespace Yun.MultiCompany.Migrations
 {
     [DbContext(typeof(MultiCompanyDbContext))]
-    partial class MultiCompanyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211231025229_add-company")]
+    partial class addcompany
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
