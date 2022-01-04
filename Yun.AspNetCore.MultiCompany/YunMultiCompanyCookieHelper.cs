@@ -2,7 +2,7 @@
 
 namespace Yun.AspNetCore.MultiCompany
 {
-    public static class AbpMultiCompanyCookieHelper
+    public static class YunMultiCompanyCookieHelper
     {
         public static void SetCompanyCookie(
             HttpContext context,

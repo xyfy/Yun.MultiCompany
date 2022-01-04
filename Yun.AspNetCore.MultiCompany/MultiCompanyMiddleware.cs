@@ -52,7 +52,7 @@ namespace Yun.AspNetCore.MultiCompany
                     if (_companyResolveResultAccessor.Result != null &&
                         _companyResolveResultAccessor.Result.AppliedResolvers.Contains(QueryStringCompanyResolveContributor.ContributorName))
                     {
-                        AbpMultiCompanyCookieHelper.SetCompanyCookie(context, _currentCompany.Id, _options.CompanyKey);
+                        YunMultiCompanyCookieHelper.SetCompanyCookie(context, _currentCompany.Id, _options.CompanyKey);
                     }
 
                     var requestCulture = await TryGetRequestCultureAsync(context);
