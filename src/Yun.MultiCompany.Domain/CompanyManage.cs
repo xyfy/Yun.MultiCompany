@@ -10,23 +10,19 @@ namespace Yun.MultiCompany
 {
     public class CompanyManage : DomainService, ICompanyManage
     {
-        private ICompanyRoleManage CompanyRoleManage { get; }
         private ICompanyRepository _companyRepository;
-        private IRepository<CompanyRole, Guid> _companyRoleRepository;
-        private IRepository<UserCompany> _userCompanyRepository;
-        private readonly IGuidGenerator _guidGenerator;
+        private ICompanyRoleRepository _companyRoleRepository;
+        private IRepository<CompanyUserRole> CompanyUserRoleRepository;
 
 
-        public CompanyManage(IRepository<CompanyRole, Guid> companyRoleRepository
-            , IRepository<UserCompany> userCompanyRepository
-            , IGuidGenerator guidGenerator, ICompanyRepository companyRepository
-            , ICompanyRoleManage companyRoleManage)
+        public CompanyManage(
+            ICompanyRepository companyRepository
+            , ICompanyRoleRepository companyRoleRepository
+            , IRepository<CompanyUserRole> companyUserRoleRepository)
         {
-            _companyRoleRepository = companyRoleRepository;
-            _userCompanyRepository = userCompanyRepository;
-            _guidGenerator = guidGenerator;
             _companyRepository = companyRepository;
-            CompanyRoleManage = companyRoleManage;
+            _companyRoleRepository = companyRoleRepository;
+            CompanyUserRoleRepository = companyUserRoleRepository;
         }
 
 
@@ -36,16 +32,16 @@ namespace Yun.MultiCompany
             Check.NotNull(companyName, nameof(companyName));
 
             await ValidateNameAsync(companyName);
-            Company company = new Company(_guidGenerator.Create(), companyName);
+            Company company = new Company(GuidGenerator.Create(), companyName);
             company.UserCompanys = new List<UserCompany>()
             {
                  new UserCompany(userId,company.Id)
             };
 
             //默认角色处理
-            var role = await CompanyRoleManage.CreateAsync(new CompanyRole(GuidGenerator.Create(), company.Id, "管理员"));
+            var role = await CreateAsync(new CompanyRole(GuidGenerator.Create(), company.Id, "管理员"));
             //用户加入默认角色
-            var cur = await CompanyRoleManage.AddUserToRoleAsync(role, userId);
+            var cur = await AddUserToRoleAsync(role, userId);
             company = await _companyRepository.InsertAsync(company);
             return company;
         }
@@ -67,6 +63,58 @@ namespace Yun.MultiCompany
             {
                 throw new UserFriendlyException("Duplicate company name: " + name); //TODO: A domain exception would be better..?
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="companyRole"></param>
+        /// <returns></returns>
+        public async Task<CompanyRole> CreateAsync(CompanyRole companyRole)
+        {
+            Check.NotNull(companyRole, nameof(companyRole));
+
+            //检查角色名
+            await ValidateRoleNameAsync(companyRole.RoleName);
+
+            companyRole = await _companyRoleRepository.InsertAsync(companyRole);
+
+            return companyRole;
+        }
+
+        public virtual async Task ChangeNameAsync(CompanyRole companyRole, string name)
+        {
+            Check.NotNull(companyRole, nameof(companyRole));
+            Check.NotNull(name, nameof(name));
+
+            await ValidateRoleNameAsync(name, companyRole.Id);
+
+            companyRole.SetRoleName(name);
+        }
+
+
+        private async Task ValidateRoleNameAsync(string name, Guid? expectedId = null)
+        {
+            var company = await _companyRoleRepository.FindByNameAsync(name);
+            if (company != null && company.Id != expectedId)
+            {
+                throw new UserFriendlyException("Duplicate company role name: " + name); //TODO: A domain exception would be better..?
+            }
+        }
+
+        public async Task<CompanyUserRole> AddUserToRoleAsync(CompanyRole companyRole, Guid? userId)
+        {
+            Check.NotNull(companyRole, nameof(companyRole));
+            Check.NotNull(userId, nameof(userId));
+
+            var cur = await CompanyUserRoleRepository.FindAsync(cur => cur.UserId == userId && cur.CompanyRoleId == companyRole.Id);
+            if (cur == null)
+            {
+                //用户不存在指定角色
+                cur = new CompanyUserRole(userId.Value, companyRole.Id, companyRole.CompanyId);
+                cur = await CompanyUserRoleRepository.InsertAsync(cur);
+            }
+            return cur;
         }
     }
 }
