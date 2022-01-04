@@ -1,5 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.EntityFrameworkCore.Metadata;
+using System;
+using System.Linq.Expressions;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.Data;
@@ -47,8 +50,8 @@ namespace Yun.MultiCompany.EntityFrameworkCore
         public DbSet<OrganizationUnit> OrganizationUnits { get; set; }
         public DbSet<IdentitySecurityLog> SecurityLogs { get; set; }
         public DbSet<IdentityLinkUser> LinkUsers { get; set; }
-
-
+        public ICurrentCompany CurrentCompany => LazyServiceProvider.LazyGetRequiredService<ICurrentCompany>();
+        protected virtual Guid? CurrentCompanyId => CurrentCompany?.Id;
         public DbSet<Company> Companies { get; set; }
         public DbSet<UserCompany> UserCompanies { get; set; }
         public DbSet<CompanyUserRole> CompanyUserRoles { get; set; }
@@ -64,6 +67,34 @@ namespace Yun.MultiCompany.EntityFrameworkCore
             : base(options)
         {
         }
+
+        protected bool MultiCompanyFilterEnabled => DataFilter?.IsEnabled<IMultiCompany>() ?? false;
+        protected override bool ShouldFilterEntity<TEntity>(IMutableEntityType entityType)
+        {
+            if (typeof(IMultiCompany).IsAssignableFrom(typeof(TEntity)))
+            {
+                return true;
+            }
+
+            return base.ShouldFilterEntity<TEntity>(entityType);
+        }
+
+        protected override Expression<Func<TEntity, bool>> CreateFilterExpression<TEntity>()
+        {
+            var expression = base.CreateFilterExpression<TEntity>();
+
+            if (typeof(IMultiCompany).IsAssignableFrom(typeof(TEntity)))
+            {
+                Expression<Func<TEntity, bool>> multiCompanyFilter =
+                    e => !MultiCompanyFilterEnabled || EF.Property<Guid>(e, "CompanyId") == CurrentCompanyId;
+                expression = expression == null
+                    ? multiCompanyFilter
+                    : CombineExpressions(expression, multiCompanyFilter);
+            }
+
+            return expression;
+        }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
