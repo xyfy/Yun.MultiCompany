@@ -15,29 +15,29 @@ namespace Yun.AspNetCore.MultiCompany
 {
     public class MultiCompanyMiddleware : IMiddleware, ITransientDependency
     {
-        private readonly ICompanyConfigurationProvider _tenantConfigurationProvider;
+        private readonly ICompanyConfigurationProvider _companyConfigurationProvider;
         private readonly ICurrentCompany _currentCompany;
         private readonly YunAspNetCoreMultiCompanyOptions _options;
-        private readonly ICompanyResolveResultAccessor _tenantResolveResultAccessor;
+        private readonly ICompanyResolveResultAccessor _companyResolveResultAccessor;
 
         public MultiCompanyMiddleware(
-            ICompanyConfigurationProvider tenantConfigurationProvider,
+            ICompanyConfigurationProvider companyConfigurationProvider,
             ICurrentCompany currentCompany,
             IOptions<YunAspNetCoreMultiCompanyOptions> options,
-            ICompanyResolveResultAccessor tenantResolveResultAccessor)
+            ICompanyResolveResultAccessor companyResolveResultAccessor)
         {
-            _tenantConfigurationProvider = tenantConfigurationProvider;
+            _companyConfigurationProvider = companyConfigurationProvider;
             _currentCompany = currentCompany;
-            _tenantResolveResultAccessor = tenantResolveResultAccessor;
+            _companyResolveResultAccessor = companyResolveResultAccessor;
             _options = options.Value;
         }
 
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-            CompanyConfiguration tenant;
+            CompanyConfiguration company;
             try
             {
-                tenant = await _tenantConfigurationProvider.GetAsync(saveResolveResult: true);
+                company = await _companyConfigurationProvider.GetAsync(saveResolveResult: true);
             }
             catch (Exception e)
             {
@@ -45,12 +45,12 @@ namespace Yun.AspNetCore.MultiCompany
                 return;
             }
 
-            if (tenant?.Id != _currentCompany.Id)
+            if (company?.Id != _currentCompany.Id)
             {
-                using (_currentCompany.Change(tenant?.Id, tenant?.Name))
+                using (_currentCompany.Change(company?.Id, company?.Name))
                 {
-                    if (_tenantResolveResultAccessor.Result != null &&
-                        _tenantResolveResultAccessor.Result.AppliedResolvers.Contains(QueryStringCompanyResolveContributor.ContributorName))
+                    if (_companyResolveResultAccessor.Result != null &&
+                        _companyResolveResultAccessor.Result.AppliedResolvers.Contains(QueryStringCompanyResolveContributor.ContributorName))
                     {
                         AbpMultiCompanyCookieHelper.SetCompanyCookie(context, _currentCompany.Id, _options.CompanyKey);
                     }

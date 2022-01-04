@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Yun.AspNetCore.MultiCompany\Yun.AspNetCore.MultiCompany.csproj" />
     <ProjectReference Include="..\Yun.MultiCompany.Application\Yun.MultiCompany.Application.csproj" />
     <ProjectReference Include="..\Yun.MultiCompany.EntityFrameworkCore\Yun.MultiCompany.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\Yun.MultiCompany.HttpApi\Yun.MultiCompany.HttpApi.csproj" />

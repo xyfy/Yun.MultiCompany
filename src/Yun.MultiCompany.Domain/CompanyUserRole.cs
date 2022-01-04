@@ -22,7 +22,7 @@ namespace Yun.MultiCompany
 
         }
         /// <summary>
-        /// 公司id
+        /// 岗位id
         /// </summary>
         public virtual Guid CompanyRoleId { get; private set; }
         /// <summary>

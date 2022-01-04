@@ -15,7 +15,7 @@ namespace Yun.AspNetCore.MultiCompany
         {
             Configure<YunCompanyResolveOptions>(options =>
             {
-                //options.CompanyResolvers.Add(new QueryStringCompanyResolveContributor());
+                options.CompanyResolvers.Add(new QueryStringCompanyResolveContributor());
                 //options.CompanyResolvers.Add(new FormCompanyResolveContributor());
                 //options.CompanyResolvers.Add(new RouteCompanyResolveContributor());
                 options.CompanyResolvers.Add(new HeaderCompanyResolveContributor());

@@ -14,17 +14,17 @@ namespace Yun.AspNetCore.MultiCompany
         {
             if (httpContext.Request.QueryString.HasValue)
             {
-                var tenantKey = context.GetYunAspNetCoreMultiCompanyOptions().CompanyKey;
-                if (httpContext.Request.Query.ContainsKey(tenantKey))
+                var companyKey = context.GetYunAspNetCoreMultiCompanyOptions().CompanyKey;
+                if (httpContext.Request.Query.ContainsKey(companyKey))
                 {
-                    var tenantValue = httpContext.Request.Query[tenantKey].ToString();
-                    if (tenantValue.IsNullOrWhiteSpace())
+                    var companyValue = httpContext.Request.Query[companyKey].ToString();
+                    if (companyValue.IsNullOrWhiteSpace())
                     {
                         context.Handled = true;
                         return Task.FromResult<string?>(null);
                     }
 
-                    return Task.FromResult((string?)tenantValue);
+                    return Task.FromResult((string?)companyValue);
                 }
             }
 
