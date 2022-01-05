@@ -5,24 +5,32 @@ using Volo.Abp;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
 using Volo.Abp.Guids;
+using System.Linq;
+using Volo.Abp.Identity;
 
 namespace Yun.MultiCompany
 {
     public class CompanyManage : DomainService, ICompanyManage
     {
-        private ICompanyRepository _companyRepository;
-        private ICompanyRoleRepository _companyRoleRepository;
-        private IRepository<CompanyUserRole> CompanyUserRoleRepository;
+        private readonly ICompanyRepository _companyRepository;
+        private readonly ICompanyRoleRepository _companyRoleRepository;
+        private readonly IRepository<CompanyUserRole> CompanyUserRoleRepository;
+        private readonly IRepository<UserCompany> UserCompanyRepository;
+        private readonly IRepository<IdentityUser, Guid> userRepository;
 
 
         public CompanyManage(
             ICompanyRepository companyRepository
             , ICompanyRoleRepository companyRoleRepository
-            , IRepository<CompanyUserRole> companyUserRoleRepository)
+            , IRepository<CompanyUserRole> companyUserRoleRepository
+            , IRepository<UserCompany> userCompanyRepository
+            , IRepository<IdentityUser, Guid> userRepository)
         {
             _companyRepository = companyRepository;
             _companyRoleRepository = companyRoleRepository;
             CompanyUserRoleRepository = companyUserRoleRepository;
+            UserCompanyRepository = userCompanyRepository;
+            this.userRepository = userRepository;
         }
 
 
@@ -115,6 +123,23 @@ namespace Yun.MultiCompany
                 cur = await CompanyUserRoleRepository.InsertAsync(cur);
             }
             return cur;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<IdentityUser>> GetCompanyUsersAsync()
+        {
+            var cusers = await UserCompanyRepository.GetQueryableAsync();
+            var users = await userRepository.GetQueryableAsync();
+
+            var q = from user in users
+                    join cu in cusers on user.Id equals cu.UserId
+                    select user;
+
+            return q.ToList();
+
         }
     }
 }

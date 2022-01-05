@@ -29,6 +29,15 @@ namespace Yun.MultiCompany.EntityFrameworkCore
         ITenantManagementDbContext
     {
         /* Add DbSet properties for your Aggregate Roots / Entities here. */
+        public ICurrentCompany CurrentCompany => LazyServiceProvider.LazyGetRequiredService<ICurrentCompany>();
+        protected virtual Guid? CurrentCompanyId => CurrentCompany?.Id;
+
+        public DbSet<Company> Companies { get; set; }
+        public DbSet<UserCompany> UserCompanies { get; set; }
+        public DbSet<CompanyUserRole> CompanyUserRoles { get; set; }
+        public DbSet<CompanyRole> CompanyRoles { get; set; }
+
+
 
         #region Entities from the modules
 
@@ -50,12 +59,6 @@ namespace Yun.MultiCompany.EntityFrameworkCore
         public DbSet<OrganizationUnit> OrganizationUnits { get; set; }
         public DbSet<IdentitySecurityLog> SecurityLogs { get; set; }
         public DbSet<IdentityLinkUser> LinkUsers { get; set; }
-        public ICurrentCompany CurrentCompany => LazyServiceProvider.LazyGetRequiredService<ICurrentCompany>();
-        protected virtual Guid? CurrentCompanyId => CurrentCompany?.Id;
-        public DbSet<Company> Companies { get; set; }
-        public DbSet<UserCompany> UserCompanies { get; set; }
-        public DbSet<CompanyUserRole> CompanyUserRoles { get; set; }
-        public DbSet<CompanyRole> CompanyRoles { get; set; }
 
         // Tenant Management
         public DbSet<Tenant> Tenants { get; set; }

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Services;
+using Volo.Abp.Identity;
 
 namespace Yun.MultiCompany
 {
@@ -20,6 +22,11 @@ namespace Yun.MultiCompany
         /// <param name="name"></param>
         /// <returns></returns>
         Task ChangeNameAsync(Company company, string name);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        Task<List<IdentityUser>> GetCompanyUsersAsync();
 
         /// <summary>
         /// 
